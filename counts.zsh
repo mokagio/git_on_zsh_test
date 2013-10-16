@@ -10,11 +10,14 @@ remote_ref=$(git config branch.$currentbranch.merge)
 
 echo "remote '$remote', remote ref '$remote_ref'"
 
-if [[ -n $GIT_STATE ]]; then
+if [[ -n $remote ]]; then
   # convert the remote ref into the tracking ref... this is a hack
   remote_branch=$(expr $remote_ref : 'refs/heads/\(.*\)')
   tracking_branch=refs/remotes/$remote/$remote_branch
 
   # now $tracking_branch should be the local ref tracking HEAD
-  git rev-list $tracking_branch..HEAD
+  echo "$tracking_branch"
+  ahead=$(git rev-list $tracking_branch..HEAD | wc -l | tr -d ' ')
+  behind=$(git rev-list HEAD..$tracking_branch | wc -l | tr -d ' ')
+  echo "⬆ $ahead : ⬇ $behind"
 fi
